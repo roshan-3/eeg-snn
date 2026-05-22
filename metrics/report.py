@@ -64,9 +64,15 @@ def report_latency(
     device: torch.device,
     t_steps: int,
     n_iters: int,
-) -> None:
+    label: str = "",
+) -> dict[int, float]:
+    """Print latency rows and return ``{batch_size: mean_ms}`` for callers."""
     in_features = 2 * NUM_CHANNELS
-    print_section(f"Latency on {device.type}")
+    header = f"Latency on {device.type}"
+    if label:
+        header += f" [{label}]"
+    print_section(header)
+    means: dict[int, float] = {}
     for batch_size in (1, 32):
         stats = measure_latency(
             model,
@@ -74,13 +80,30 @@ def report_latency(
             device=device,
             n_iters=n_iters,
         )
-        label = "single-trial" if batch_size == 1 else f"batch={batch_size}"
+        row_label = "single-trial" if batch_size == 1 else f"batch={batch_size}"
         print(
-            f"{label:<14} mean={stats['mean_ms']:7.2f} ms  "
+            f"{row_label:<14} mean={stats['mean_ms']:7.2f} ms  "
             f"median={stats['median_ms']:7.2f} ms  "
             f"p95={stats['p95_ms']:7.2f} ms  "
             f"throughput={stats['trials_per_sec']:8.1f} trials/s"
         )
+        means[batch_size] = stats["mean_ms"]
+    return means
+
+
+def report_backend_comparison(
+    cpu_means: dict[int, float],
+    gpu_means: dict[int, float],
+    label: str,
+) -> None:
+    """Print a CPU-vs-GPU speedup table for the same model class."""
+    print_section(f"Speedup CPU -> CUDA [{label}]")
+    print(f"{'batch':<8} {'cpu (ms)':>12} {'cuda (ms)':>12} {'speedup':>10}")
+    for bs in sorted(cpu_means.keys() & gpu_means.keys()):
+        cpu_ms = cpu_means[bs]
+        gpu_ms = gpu_means[bs]
+        speedup = cpu_ms / gpu_ms if gpu_ms > 0 else float("inf")
+        print(f"{bs:<8} {cpu_ms:>12.2f} {gpu_ms:>12.2f} {speedup:>9.2f}x")
 
 
 def report_firing_rate(
@@ -130,6 +153,9 @@ def main() -> None:
     parser.add_argument("--latency-iters", type=int, default=100)
     parser.add_argument("--device", default=None,
                         help="override device, e.g. 'cpu' or 'cuda'")
+    parser.add_argument("--compare-backends", action="store_true",
+                        help="time snnTorch reference on CPU and custom CUDA "
+                             "kernel on GPU, then print speedup. Requires CUDA.")
     parser.add_argument("--with-data", action="store_true",
                         help="also measure firing rate on PhysioNet "
                              "(downloads data on first run)")
@@ -147,7 +173,36 @@ def main() -> None:
 
     model = build_model(args.checkpoint, device)
     report_model_stats(model)
-    report_latency(model, device, args.t_steps, args.latency_iters)
+    report_latency(model, device, args.t_steps, args.latency_iters,
+                   label="snnTorch reference")
+
+    if args.compare_backends:
+        if not torch.cuda.is_available():
+            raise RuntimeError("--compare-backends requires CUDA")
+        from stack_validation.model_cuda import LIFClassifierCuda
+
+        cpu_dev = torch.device("cpu")
+        cuda_dev = torch.device("cuda")
+
+        ref_cpu = build_model(args.checkpoint, cpu_dev)
+        cpu_means = report_latency(ref_cpu, cpu_dev, args.t_steps,
+                                   args.latency_iters,
+                                   label="snnTorch CPU baseline")
+
+        cuda_model = LIFClassifierCuda(
+            in_features=2 * NUM_CHANNELS, num_classes=2,
+        ).to(cuda_dev)
+        if args.checkpoint is not None:
+            cuda_model.load_state_dict(
+                torch.load(args.checkpoint, map_location=cuda_dev),
+                strict=False,
+            )
+        gpu_means = report_latency(cuda_model, cuda_dev, args.t_steps,
+                                   args.latency_iters,
+                                   label="custom CUDA kernel")
+
+        report_backend_comparison(cpu_means, gpu_means,
+                                  label="snnTorch CPU vs custom CUDA")
 
     if args.with_data:
         report_firing_rate(

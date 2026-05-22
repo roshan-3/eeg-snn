@@ -1,17 +1,12 @@
-"""LIF SNN classifier built on snntorch.
+"""LIF SNN classifier using the custom CUDA LIF kernel.
 
-Architecture (matches README):
+Architecturally identical to ``stack_validation.model.LIFClassifier``;
+only the hidden Leaky cells are swapped for ``LIFCudaCell`` which calls
+into the hand-written CUDA kernel under ``lif_kernel/``. The readout stays as
+snntorch's leaky integrator (no spikes, no kernel benefit).
 
-    (T, B, 2C)
-        -> Dense -> LIF(64)           subtract-on-reset, fast-sigmoid surrogate
-        -> Dense -> LIF(32)           subtract-on-reset, fast-sigmoid surrogate
-        -> Dense -> Leaky integrator readout(K)   no spikes, just integrates
-        -> time-mean membrane potential as logits -> CE
-
-This snntorch implementation is the reference. A numerically-equivalent
-variant using the hand-written CUDA LIF kernel lives in
-``stack_validation.model_cuda.LIFClassifierCuda``; the two are validated
-against each other in ``tests/test_cuda_lif.py``.
+Used by the latency report to compare custom CUDA against the snnTorch
+reference implementation on identical inputs.
 """
 
 from __future__ import annotations
@@ -19,13 +14,14 @@ from __future__ import annotations
 import snntorch as snn
 import torch
 import torch.nn as nn
-from snntorch import surrogate
+
+from lif_kernel.lif_function import LIFCudaCell
 
 LARGE_THRESHOLD: float = 1e9  # readout never spikes
 
 
-class LIFClassifier(nn.Module):
-    """Feedforward LIF SNN with a leaky-integrator readout."""
+class LIFClassifierCuda(nn.Module):
+    """LIFClassifier variant whose hidden LIFs use the custom CUDA kernel."""
 
     def __init__(
         self,
@@ -38,42 +34,36 @@ class LIFClassifier(nn.Module):
         surrogate_slope: float = 25.0,
     ) -> None:
         super().__init__()
-        spike_grad = surrogate.fast_sigmoid(slope=surrogate_slope)
 
         self.fc1 = nn.Linear(in_features, hidden_1)
-        self.lif1 = snn.Leaky(beta=beta, threshold=threshold, spike_grad=spike_grad)
+        self.lif1 = LIFCudaCell(beta=beta, threshold=threshold,
+                                surrogate_slope=surrogate_slope)
 
         self.fc2 = nn.Linear(hidden_1, hidden_2)
-        self.lif2 = snn.Leaky(beta=beta, threshold=threshold, spike_grad=spike_grad)
+        self.lif2 = LIFCudaCell(beta=beta, threshold=threshold,
+                                surrogate_slope=surrogate_slope)
 
         self.fc_out = nn.Linear(hidden_2, num_classes)
-        # reset_mechanism="none" + huge threshold -> pure leaky integrator.
+        # Readout stays on snntorch; it never spikes (huge threshold) so
+        # there is no kernel benefit to porting it.
         self.li_out = snn.Leaky(
             beta=beta,
             threshold=LARGE_THRESHOLD,
-            spike_grad=spike_grad,
             reset_mechanism="none",
         )
 
     def forward(
         self, spikes: torch.Tensor
     ) -> tuple[torch.Tensor, tuple[torch.Tensor, torch.Tensor]]:
-        """Run the SNN over T timesteps.
-
-        Args:
-            spikes: (T, B, in_features) time-major spike trains.
-
-        Returns:
-            logits: (B, num_classes) time-mean readout membrane potential.
-            rates:  (rate_layer1, rate_layer2) scalar tensors, mean firing
-                    rate of each hidden LIF layer (for rate regularization).
-        """
         if spikes.dim() != 3:
             raise ValueError(f"spikes must be (T, B, F), got shape {tuple(spikes.shape)}")
 
-        t_steps = spikes.size(0)
-        mem1 = self.lif1.init_leaky()
-        mem2 = self.lif2.init_leaky()
+        t_steps, batch_size, _ = spikes.shape
+        hidden_1 = self.fc1.out_features
+        hidden_2 = self.fc2.out_features
+
+        mem1 = torch.zeros(batch_size, hidden_1, device=spikes.device)
+        mem2 = torch.zeros(batch_size, hidden_2, device=spikes.device)
         mem_out = self.li_out.init_leaky()
 
         readout_history: list[torch.Tensor] = []

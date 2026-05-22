@@ -4,3 +4,5 @@ brainflow>=5.10
 scipy>=1.10
 snntorch>=0.9
 mne>=1.6
+# Dev / test:
+pytest>=7.0
