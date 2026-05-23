@@ -1,0 +1,101 @@
+Device: cpu  seed=0
+Loading PhysioNet subjects 1..10 (10 total) at 250.0 Hz...
+Using default location ~/mne_data for EEGBCI...
+Creating C:\Users\rosha\mne_data
+Downloading EEGBCI data
+Downloading file 'S001/S001R01.edf' from 'https://physionet.org/files/eegmmidb/1.0.0/S001/S001R01.edf' to 'C:\Users\rosha\mne_data\MNE-eegbci-data\files\eegmmidb\1.0.0'.
+Attempting to create new mne-python configuration file:
+C:\Users\rosha\.mne\mne-python.json
+Could not read the C:\Users\rosha\.mne\mne-python.json json file during the writing. Assuming it is empty. Got: Expecting value: line 1 column 1 (char 0)
+Download complete in 08s (1.2 MB)
+  S001 run1 (open): 7/15 epochs kept
+Downloading EEGBCI data
+Downloading file 'S001/S001R02.edf' from 'https://physionet.org/files/eegmmidb/1.0.0/S001/S001R02.edf' to 'C:\Users\rosha\mne_data\MNE-eegbci-data\files\eegmmidb\1.0.0'.
+Download complete in 06s (1.2 MB)
+  S001 run2 (closed): 0/15 epochs kept
+Downloading EEGBCI data
+Downloading file 'S002/S002R01.edf' from 'https://physionet.org/files/eegmmidb/1.0.0/S002/S002R01.edf' to 'C:\Users\rosha\mne_data\MNE-eegbci-data\files\eegmmidb\1.0.0'.
+Download complete in 07s (1.2 MB)
+  S002 run1 (open): 0/15 epochs kept
+Downloading EEGBCI data
+Downloading file 'S002/S002R02.edf' from 'https://physionet.org/files/eegmmidb/1.0.0/S002/S002R02.edf' to 'C:\Users\rosha\mne_data\MNE-eegbci-data\files\eegmmidb\1.0.0'.
+Download complete in 07s (1.2 MB)
+  S002 run2 (closed): 0/15 epochs kept
+Downloading EEGBCI data
+Downloading file 'S003/S003R01.edf' from 'https://physionet.org/files/eegmmidb/1.0.0/S003/S003R01.edf' to 'C:\Users\rosha\mne_data\MNE-eegbci-data\files\eegmmidb\1.0.0'.
+Download complete in 11s (1.2 MB)
+  S003 run1 (open): 0/15 epochs kept
+Downloading EEGBCI data
+Downloading file 'S003/S003R02.edf' from 'https://physionet.org/files/eegmmidb/1.0.0/S003/S003R02.edf' to 'C:\Users\rosha\mne_data\MNE-eegbci-data\files\eegmmidb\1.0.0'.
+Download complete in 12s (1.2 MB)
+  S003 run2 (closed): 0/15 epochs kept
+Downloading EEGBCI data
+Downloading file 'S004/S004R01.edf' from 'https://physionet.org/files/eegmmidb/1.0.0/S004/S004R01.edf' to 'C:\Users\rosha\mne_data\MNE-eegbci-data\files\eegmmidb\1.0.0'.
+Download complete in 11s (1.2 MB)
+  S004 run1 (open): 15/15 epochs kept
+Downloading EEGBCI data
+Downloading file 'S004/S004R02.edf' from 'https://physionet.org/files/eegmmidb/1.0.0/S004/S004R02.edf' to 'C:\Users\rosha\mne_data\MNE-eegbci-data\files\eegmmidb\1.0.0'.
+Download complete in 10s (1.2 MB)
+  S004 run2 (closed): 15/15 epochs kept
+Downloading EEGBCI data
+Downloading file 'S005/S005R01.edf' from 'https://physionet.org/files/eegmmidb/1.0.0/S005/S005R01.edf' to 'C:\Users\rosha\mne_data\MNE-eegbci-data\files\eegmmidb\1.0.0'.
+Download complete in 10s (1.2 MB)
+  S005 run1 (open): 13/15 epochs kept
+Downloading EEGBCI data
+Downloading file 'S005/S005R02.edf' from 'https://physionet.org/files/eegmmidb/1.0.0/S005/S005R02.edf' to 'C:\Users\rosha\mne_data\MNE-eegbci-data\files\eegmmidb\1.0.0'.
+Download complete in 10s (1.2 MB)
+  S005 run2 (closed): 15/15 epochs kept
+Downloading EEGBCI data
+Downloading file 'S006/S006R01.edf' from 'https://physionet.org/files/eegmmidb/1.0.0/S006/S006R01.edf' to 'C:\Users\rosha\mne_data\MNE-eegbci-data\files\eegmmidb\1.0.0'.
+Download complete in 10s (1.2 MB)
+  S006 run1 (open): 12/15 epochs kept
+Downloading EEGBCI data
+Downloading file 'S006/S006R02.edf' from 'https://physionet.org/files/eegmmidb/1.0.0/S006/S006R02.edf' to 'C:\Users\rosha\mne_data\MNE-eegbci-data\files\eegmmidb\1.0.0'.
+Download complete in 10s (1.2 MB)
+  S006 run2 (closed): 15/15 epochs kept
+Downloading EEGBCI data
+Downloading file 'S007/S007R01.edf' from 'https://physionet.org/files/eegmmidb/1.0.0/S007/S007R01.edf' to 'C:\Users\rosha\mne_data\MNE-eegbci-data\files\eegmmidb\1.0.0'.
+Download complete in 11s (1.2 MB)
+  S007 run1 (open): 2/15 epochs kept
+Downloading EEGBCI data
+Downloading file 'S007/S007R02.edf' from 'https://physionet.org/files/eegmmidb/1.0.0/S007/S007R02.edf' to 'C:\Users\rosha\mne_data\MNE-eegbci-data\files\eegmmidb\1.0.0'.
+Download complete in 08s (1.2 MB)
+  S007 run2 (closed): 0/15 epochs kept
+Downloading EEGBCI data
+Downloading file 'S008/S008R01.edf' from 'https://physionet.org/files/eegmmidb/1.0.0/S008/S008R01.edf' to 'C:\Users\rosha\mne_data\MNE-eegbci-data\files\eegmmidb\1.0.0'.
+Download complete in 07s (1.2 MB)
+  S008 run1 (open): 12/15 epochs kept
+Downloading EEGBCI data
+Downloading file 'S008/S008R02.edf' from 'https://physionet.org/files/eegmmidb/1.0.0/S008/S008R02.edf' to 'C:\Users\rosha\mne_data\MNE-eegbci-data\files\eegmmidb\1.0.0'.
+Download complete in 08s (1.2 MB)
+  S008 run2 (closed): 14/15 epochs kept
+Downloading EEGBCI data
+Downloading file 'S009/S009R01.edf' from 'https://physionet.org/files/eegmmidb/1.0.0/S009/S009R01.edf' to 'C:\Users\rosha\mne_data\MNE-eegbci-data\files\eegmmidb\1.0.0'.
+Download complete in 07s (1.2 MB)
+  S009 run1 (open): 0/15 epochs kept
+Downloading EEGBCI data
+Downloading file 'S009/S009R02.edf' from 'https://physionet.org/files/eegmmidb/1.0.0/S009/S009R02.edf' to 'C:\Users\rosha\mne_data\MNE-eegbci-data\files\eegmmidb\1.0.0'.
+Download complete in 06s (1.2 MB)
+  S009 run2 (closed): 0/15 epochs kept
+Downloading EEGBCI data
+Downloading file 'S010/S010R01.edf' from 'https://physionet.org/files/eegmmidb/1.0.0/S010/S010R01.edf' to 'C:\Users\rosha\mne_data\MNE-eegbci-data\files\eegmmidb\1.0.0'.
+Download complete in 06s (1.2 MB)
+  S010 run1 (open): 0/15 epochs kept
+Downloading EEGBCI data
+Downloading file 'S010/S010R02.edf' from 'https://physionet.org/files/eegmmidb/1.0.0/S010/S010R02.edf' to 'C:\Users\rosha\mne_data\MNE-eegbci-data\files\eegmmidb\1.0.0'.
+Download complete in 08s (1.2 MB)
+  S010 run2 (closed): 2/15 epochs kept
+Loaded 122 epochs, shape (N,C,T) = (122, 16, 1000), labels: open=61, closed=61
+Delta-encoded spikes: shape (N,2C,T) = (122, 32, 1000), mean rate = 0.2477
+epoch   1  loss=1.0007  train_acc=0.529  test_acc=0.432
+epoch   2  loss=0.9417  train_acc=0.529  test_acc=0.432
+epoch   3  loss=0.8697  train_acc=0.529  test_acc=0.432
+epoch   4  loss=0.7984  train_acc=0.529  test_acc=0.432
+epoch   5  loss=0.7276  train_acc=0.529  test_acc=0.432
+epoch   6  loss=0.7138  train_acc=0.482  test_acc=0.243
+epoch   7  loss=0.7229  train_acc=0.306  test_acc=0.297
+epoch   8  loss=0.7146  train_acc=0.318  test_acc=0.459
+epoch   9  loss=0.7071  train_acc=0.553  test_acc=0.432
+epoch  10  loss=0.7095  train_acc=0.529  test_acc=0.432
+
+Best test accuracy: 0.459

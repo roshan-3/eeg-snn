@@ -26,7 +26,7 @@ from .montage import NUM_CHANNELS
 
 DEFAULT_TARGET_FS_HZ: float = 250.0
 DEFAULT_EPOCH_S: float = 4.0
-SPLIT_SEED: int = 0
+DEFAULT_SEED: int = 0
 
 
 def parse_subjects(spec: str) -> list[int]:
@@ -47,13 +47,17 @@ def parse_subjects(spec: str) -> list[int]:
 
 
 def make_dataloaders(
-    spikes: np.ndarray, labels: np.ndarray, batch_size: int, train_frac: float
+    spikes: np.ndarray,
+    labels: np.ndarray,
+    batch_size: int,
+    train_frac: float,
+    seed: int = DEFAULT_SEED,
 ) -> tuple[DataLoader, DataLoader]:
     """Random train/test split of (N, 2C, T) spike trains."""
     if not 0.0 < train_frac < 1.0:
         raise ValueError(f"train_frac must be in (0, 1), got {train_frac}")
     n = spikes.shape[0]
-    perm = np.random.default_rng(SPLIT_SEED).permutation(n)
+    perm = np.random.default_rng(seed).permutation(n)
     cut = int(n * train_frac)
     train_idx, test_idx = perm[:cut], perm[cut:]
 
@@ -131,10 +135,14 @@ def main() -> None:
     parser.add_argument("--grad-clip", type=float, default=1.0)
     parser.add_argument("--save", type=Path, default=None,
                         help="optional path to save trained model state_dict")
+    parser.add_argument("--seed", type=int, default=DEFAULT_SEED,
+                        help="seed for split RNG and torch")
     args = parser.parse_args()
 
+    torch.manual_seed(args.seed)
+    np.random.seed(args.seed)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f"Device: {device}")
+    print(f"Device: {device}  seed={args.seed}")
 
     subjects = parse_subjects(args.subjects)
     print(f"Loading PhysioNet subjects {subjects[0]}..{subjects[-1]} "
@@ -153,7 +161,7 @@ def main() -> None:
           f"mean rate = {spikes.mean():.4f}")
 
     train_loader, test_loader = make_dataloaders(
-        spikes, batch.labels, args.batch_size, args.train_frac
+        spikes, batch.labels, args.batch_size, args.train_frac, seed=args.seed
     )
 
     model = LIFClassifier(in_features=2 * NUM_CHANNELS, num_classes=2).to(device)

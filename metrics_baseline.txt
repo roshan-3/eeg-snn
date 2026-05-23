@@ -1,0 +1,13 @@
+
+=== Model ===
+total params:       4,258
+trainable params:   4,258
+storage:            16.63 KB
+per-layer params:
+  fc1          2,112
+  fc2          2,080
+  fc_out       66
+
+=== Latency on cpu ===
+single-trial   mean= 767.35 ms  median= 758.90 ms  p95= 845.45 ms  throughput=     1.3 trials/s
+batch=32       mean= 907.82 ms  median= 865.28 ms  p95=1211.25 ms  throughput=    35.2 trials/s
